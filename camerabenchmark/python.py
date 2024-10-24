@@ -1,11 +1,16 @@
 import cv2
 import time
 import os
+import serial
 
 # Function to get Raspberry Pi CPU temperature
 def get_cpu_temperature():
     temp = os.popen("vcgencmd measure_temp").readline()
     return temp.replace("temp=", "").strip()
+
+# Initialize the serial connection (e.g., for a sensor connected to /dev/ttyUSB0)
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+ser.flush()
 
 # Initialize camera
 cap = cv2.VideoCapture(0)  # Use camera 0 (default)
@@ -36,9 +41,17 @@ while True:
     cpu_temp = get_cpu_temperature()
     temp_text = f"Temp: {cpu_temp}"
 
-    # Display FPS and CPU temperature on the frame
+    # Get data from the serial device
+    if ser.in_waiting > 0:
+        sensor_data = ser.readline().decode('utf-8').strip()
+        sensor_text = f"Sensor: {sensor_data}"
+    else:
+        sensor_text = "Sensor: No data"
+
+    # Display FPS, CPU temperature, and sensor data on the frame
     cv2.putText(frame, fps_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.putText(frame, temp_text, (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    cv2.putText(frame, sensor_text, (10, 110), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
     # Display the resulting frame
     cv2.imshow('Camera', frame)
@@ -49,4 +62,5 @@ while True:
 
 # Release the camera and close all windows
 cap.release()
+ser.close()
 cv2.destroyAllWindows()
