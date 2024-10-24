@@ -9,11 +9,11 @@ def get_cpu_temperature():
     return temp.replace("temp=", "").strip()
 
 # Initialize the serial connection (e.g., for a sensor connected to /dev/ttyUSB0)
-ser = serial.Serial('/dev/video0', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)  # Correct the serial device path
 ser.flush()
 
-# Initialize camera
-cap = cv2.VideoCapture(0)  # Use camera 0 (default)
+# Initialize camera (e.g., /dev/video0 for the USB camera)
+cap = cv2.VideoCapture('/dev/video0')  # Make sure the correct video device is used
 
 # Set width and height of the camera frame
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
