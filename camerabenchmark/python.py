@@ -1,7 +1,7 @@
 import cv2
 
 # Initialize the camera (change to '/dev/video0' or the correct video device if necessary)
-camera = cv2.VideoCapture('/dev/video0')  # Change this to your video device
+camera = cv2.VideoCapture(0)  # Change this to your video device
 
 # Check if the camera opened successfully
 if not camera.isOpened():
